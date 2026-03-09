@@ -26,7 +26,7 @@ Enthält alle Jira-Issues (Tickets) mit ihren Metadaten. Jede Zeile repräsentie
 | remaining_estimate | integer | YES | Verbleibende Schätzung (Sekunden) |
 | time_spent | integer | YES | Gebuchte Zeit (Sekunden) |
 | epic_link | varchar(50) | YES | Issue-Key des zugehörigen Epics |
-| parent_key | varchar(50) | YES | Issue-Key des Eltern-Issues |
+| parent_key | varchar(50) | YES | Issue-Key des Eltern-Issues – **primäre Beziehung für Child-Issues** (z.B. P2M-Tasks → Epic) |
 | labels | text | YES | Kommagetrennte Labels |
 | components | text | YES | Kommagetrennte Komponenten |
 | fix_versions | text | YES | Kommagetrennte Fix-Versionen |
@@ -105,10 +105,47 @@ custom_fields->>'customfield_10100'
 custom_fields->'customfield_10134'->>'value'
 ```
 
-> Bekannte Custom-Fields und ihre IDs hier ergänzen, sobald weitere identifiziert werden.
+### Bekannte Custom-Fields
 
-- custom-field 10134: Steht für "Release Type" und ist ein String, der mit value extrahiert werden kann.
-- custom-field 10112: Steht für das Feld "Relevant for raodmap" und kann die values "yes" oder "no" enthalten.
+| ID | Jira-Feldname | Zugriff | Mögliche Werte |
+|----|---------------|---------|----------------|
+| `customfield_10134` | Release Type | `custom_fields->'customfield_10134'->>'value'` | z.B. `'Landmark Update (major changes for customers)'` |
+| `customfield_10112` | Relevant for Roadmap | `custom_fields->>'customfield_10112'` | `'yes'` oder `'no'` (einfacher String, kein Objekt) |
+
+```sql
+-- Relevant for Roadmap = yes:
+WHERE custom_fields->>'customfield_10112' = 'yes'
+
+-- Landmark-Release:
+WHERE custom_fields->'customfield_10134'->>'value' = 'Landmark Update (major changes for customers)'
+```
+
+## Bekannte Issue-Typen
+
+| issue_type (exakter DB-Wert) | Bedeutung |
+|------------------------------|-----------|
+| `'Epic'` | Epic = ein Release |
+| `'P2M Task'` | P2M-Zulieferung (Child eines Epics) |
+
+## Eltern-Kind-Beziehungen
+
+Child-Issues referenzieren ihren Eltern-Issue über `parent_key` (= `issue_key` des Eltern-Issues).
+
+```sql
+-- Alle P2M-Tasks eines Epics:
+SELECT child.*
+FROM jira_issues child
+JOIN jira_issues epic ON epic.issue_key = child.parent_key
+WHERE epic.issue_type = 'Epic'
+  AND child.issue_type = 'P2M Task'
+
+-- Epics mit mindestens einem P2M-Task (EXISTS):
+WHERE EXISTS (
+  SELECT 1 FROM jira_issues child
+  WHERE child.parent_key = epic.issue_key
+    AND child.issue_type = 'P2M Task'
+)
+```
 
 ## Typische Filter
 
