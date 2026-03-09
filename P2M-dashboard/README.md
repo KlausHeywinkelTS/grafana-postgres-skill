@@ -22,13 +22,14 @@ Es gilt im Unternehmen die Regel: Jedes Epic in Jira steht für ein Release.
 ## Dashboard-Variablen (Grafana)
 
 - `$__timeFilter`: Standard-Grafana-Zeitfilter; angewendet auf das **letzte Status-Wechsel-Datum des Epics** (siehe Zeitraum)
+- `${exclude_project_keys}`: Multi-Value-Variable zum Ausschließen von Projekten nach `project_key`. Leer = kein Ausschluss. Werte über `sql_variable-projekt-keys.sql` befüllen.
 
 ## Zeitraum
 
 Der Zeitfilter bezieht sich auf das letzte Datum, wann ein Epic in den Status **„After Release"** gewechselt hat.
 Falls ein Epic nie den Status „After Release" erreicht hat, gilt alternativ das letzte Datum des Wechsels in **„Done"** oder **„Closed"**.
 
-Dieses Datum wird aus `jira_issue_changelog` ermittelt: `to_display_value IN ('After Release', 'Done', 'Closed')`, priorisiert in dieser Reihenfolge (After Release > Done/Closed).
+Dieses Datum wird aus `jira_issue_changelog` ermittelt: `to_value IN ('After Release', 'Done', 'Closed')`, priorisiert in dieser Reihenfolge (After Release > Done/Closed).
 
 ## Panels
 
@@ -39,7 +40,8 @@ Dieses Datum wird aus `jira_issue_changelog` ermittelt: `to_display_value IN ('A
 - **Metriken / Spalten**: %-Wert (Anzahl Landmark-Epics mit mind. einem P2M-Task / Anzahl aller Landmark-Epics × 100)
 - **Filter**:
   - `issue_type = 'Epic'`
-  - `customfield_10134 = 'Landmark Update (major changes for customers)'` (Release Type; unabhängig von „Relevant for Roadmap")
+  - `customfield_10112->>'value' = 'Yes'` (Relevant for Roadmap, Großschreibung)
+  - `customfield_10134 = 'Landmark Update (major changes for customers)'` (Release Type)
   - Zeitraum: letzter Statuswechsel nach „After Release" (Prio 1), sonst „Done" oder „Closed" (Prio 2) – Datum aus `jira_issue_changelog`
 - **Aggregation**: COUNT mit Bedingung (zwei Zähler: Gesamt-Landmark-Epics vs. Landmark-Epics mit mind. einem P2M-Task)
 - **Hinweise**:

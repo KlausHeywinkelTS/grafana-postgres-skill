@@ -109,15 +109,15 @@ custom_fields->'customfield_10134'->>'value'
 
 | ID | Jira-Feldname | Zugriff | Mögliche Werte |
 |----|---------------|---------|----------------|
-| `customfield_10134` | Release Type | `custom_fields->'customfield_10134'->>'value'` | z.B. `'Landmark Update (major changes for customers)'` |
-| `customfield_10112` | Relevant for Roadmap | `custom_fields->>'customfield_10112'` | `'yes'` oder `'no'` (einfacher String, kein Objekt) |
+| `customfield_10134` | Release Type | `custom_fields->'customfield_10134'->>'value'` | z.B. `'Landmark Update (major changes for customers)'` – **Achtung: Exakt-Match schlägt fehl (versteckte Zeichen im Wert), immer ILIKE verwenden** |
+| `customfield_10112` | Relevant for Roadmap | `custom_fields->'customfield_10112'->>'value'` | `'Yes'` oder `'No'` (Großschreibung! Objekt mit value-Property, wie customfield_10134) |
 
 ```sql
--- Relevant for Roadmap = yes:
-WHERE custom_fields->>'customfield_10112' = 'yes'
+-- Relevant for Roadmap = yes (Achtung: Großschreibung "Yes"):
+WHERE custom_fields->'customfield_10112'->>'value' = 'Yes'
 
--- Landmark-Release:
-WHERE custom_fields->'customfield_10134'->>'value' = 'Landmark Update (major changes for customers)'
+-- Landmark-Release (ILIKE statt = wegen versteckter Zeichen im gespeicherten Wert):
+WHERE custom_fields->'customfield_10134'->>'value' ILIKE '%Landmark Update%'
 ```
 
 ## Bekannte Issue-Typen

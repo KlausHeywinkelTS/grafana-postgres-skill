@@ -125,6 +125,7 @@ Header-Kommentarblock immer einfügen:
 
 ```sql
 -- ============================================================
+-- Datei:       sql_<goal>.sql
 -- Ziel:        <Beschreibung aus Prompt>
 -- Panel-Typ:   <Typ>
 -- Tabellen:    <Tabellennamen>
@@ -135,6 +136,57 @@ Header-Kommentarblock immer einfügen:
 
 SELECT ...
 ```
+
+## Verbotene Felder
+
+> **`is_archived` niemals verwenden** – weder in WHERE-Bedingungen noch in SELECT-Spalten. Dieses Feld wird in keiner Abfrage benötigt und soll vollständig ignoriert werden.
+
+## Bekannte Fallstricke
+
+### $__timeFilter nur im äußersten WHERE
+`$__timeFilter` **niemals innerhalb eines CTEs** verwenden – Grafana setzt das Makro per Textersetzung ein, was in verschachtelten CTEs zu unzuverlässigem Verhalten führt. Stattdessen `release_date` oder das relevante Zeitfeld aus dem CTE nach oben durchreichen und `$__timeFilter` im finalen SELECT-WHERE anwenden.
+
+```sql
+-- Falsch:
+landmark_epics AS (
+  ...
+  WHERE $__timeFilter(erd.release_date)   -- ❌ nicht in CTE
+)
+
+-- Richtig:
+SELECT ... FROM landmark_epics le
+WHERE $__timeFilter(le.release_date)      -- ✅ im äußersten WHERE
+```
+
+### Jira Custom-Field-Stringwerte: ILIKE statt =
+Werte aus Jira Select-Listen können **versteckte Zeichen** enthalten (z.B. Non-Breaking Spaces, Encoding-Artefakte). Ein Exakt-Match mit `=` schlägt dann lautlos fehl. Daher:
+- Für Custom-Field-Stringwerte **immer `ILIKE '%Suchbegriff%'`** statt `= 'exakter Wert'` verwenden
+- Gilt insbesondere für `customfield_10134` und ähnliche Select-Listen-Felder
+
+```sql
+-- Falsch:
+WHERE custom_fields->'customfield_10134'->>'value' = 'Landmark Update (major changes for customers)'  -- ❌
+
+-- Richtig:
+WHERE custom_fields->'customfield_10134'->>'value' ILIKE '%Landmark Update%'  -- ✅
+```
+
+### Custom-Field-Werte sind case-sensitiv
+Vor dem Filtern immer den echten Wert aus der DB prüfen – nie raten:
+```sql
+SELECT DISTINCT custom_fields->'customfield_XXXXX'->>'value'
+FROM jira_issues
+WHERE issue_type = 'Epic'
+ORDER BY 1
+```
+Beispiel: `customfield_10112` liefert `'Yes'` (Großschreibung), nicht `'yes'`.
+
+### Debug-Strategie bei leerem Ergebnis
+CTEs von innen nach außen einzeln testen:
+1. Innerste CTE isoliert ausführen – liefert sie Daten?
+2. Nächste CTE mit JOIN dazu – noch Daten?
+3. So lange weitergehen, bis die Stufe gefunden ist, die leer bleibt
+4. Dann gezielt den Filter dieser Stufe prüfen (DISTINCT-Query auf das fragliche Feld)
 
 ## Validierungs-Checkliste
 

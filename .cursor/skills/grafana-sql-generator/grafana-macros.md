@@ -23,11 +23,30 @@
 | `${var:sqlstring}` | `WHERE name = ${var:sqlstring}` | Einzelwert mit Quoting (sicher) |
 | `${var:csv}` | Kommagetrennte Liste | Selten |
 
-### Multi-Value-Variable (IN-Klausel)
+### Multi-Value-Variable (IN / NOT IN-Klausel)
+
+### Bewährtes Muster: :csv + $var (empfohlen)
+
 ```sql
--- Dashboard-Variable "devices" mit Multi-Select:
-WHERE device_id IN (${devices:raw})
+-- Optionaler Einschluss-Filter (IN):
+AND (
+  '${project_keys:csv}' = ''
+  OR e.project_key IN ($project_keys)
+)
+
+-- Optionaler Ausschluss-Filter (NOT IN):
+AND (
+  '${exclude_project_keys:csv}' = ''
+  OR e.project_key NOT IN ($exclude_project_keys)
+)
 ```
+
+**Wie es funktioniert:**
+- `'${var:csv}'` → Grafana fügt den Wert als CSV-String ein → Leer-Check mit `= ''` möglich
+- `$var` (ohne `{}`) → Grafana expandiert Multi-Value korrekt zu `'CA','CB'` für `IN`-Klauseln
+- Leer = Bedingung greift nicht, ein oder mehrere Werte = Filter aktiv
+
+> **Nicht verwenden**: `:raw` für String-Werte (fehlende Anführungszeichen → Syntaxfehler), `:singlequote` (nicht in allen Grafana-Versionen unterstützt).
 
 ### Variable in LIKE
 ```sql

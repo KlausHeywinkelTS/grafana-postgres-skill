@@ -52,8 +52,12 @@ JOIN jira_issues i ON i.jira_id = c.issue_id
 -- Nur Statusänderungen:
 WHERE field_name = 'status'
 
--- Nur Statuswechsel zu "In Progress":
-WHERE field_name = 'status' AND to_display_value = 'In Progress'
+-- Nur Statuswechsel zu einem bestimmten Status:
+-- to_value enthält den lesbaren Statusnamen (z.B. 'In Progress', 'Done', 'After Release')
+WHERE field_name = 'status' AND to_value = 'In Progress'
+
+-- Statuswechsel zu "After Release", "Done" oder "Closed":
+WHERE field_name = 'status' AND to_value IN ('After Release', 'Done', 'Closed')
 
 -- Durchlaufzeit: Wann wurde Issue geöffnet und wann abgeschlossen?
 -- (zwei Zeilen pro Issue: from=Open→to=In Progress und from=*→to=Done)
