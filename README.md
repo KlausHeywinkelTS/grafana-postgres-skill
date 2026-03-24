@@ -22,9 +22,9 @@ grafana-postgres-skills/
 
 ---
 
-## Schnellstart
+## Workflow 1: Neues Dashboard erstellen
 
-### 1. Neues Dashboard anlegen
+### 1. Dashboard-Verzeichnis anlegen
 
 Sage dem Cursor-Agent:
 
@@ -46,26 +46,21 @@ Beispiel für einen Panel-Eintrag:
 - **Typ**: Bar Chart
 - **Beschreibung**: Zeigt die Anzahl offener Issues gruppiert nach Status
 - **Metriken / Spalten**: status, COUNT(*) als Anzahl
-- **Filter**: Nur is_archived = false
+- **Filter**: project_key = 'WISH'
 - **Aggregation**: COUNT pro Status
 ```
 
-### 3. Prompt-Grundgerüste generieren (Bootstrapping)
+### 3. Prompts bootstrappen
 
 Sage dem Agent:
 
 > „Bootstrappe Prompts für `<dashboard-name>`"
 
-Der Skill liest die Panel-Liste aus dem README und legt für jedes Panel eine vorausgefüllte `prompt_<panel>.md` an. Fehlende Informationen werden mit `<!-- TODO: ausfüllen -->` markiert.
+Der Skill liest die Panel-Liste aus dem README und legt für jedes Panel eine vorausgefüllte `prompt_<panel>.md` an. Panels, für die bereits eine Prompt-Datei existiert, werden dabei übersprungen. Fehlende Informationen werden mit `<!-- TODO: ausfüllen -->` markiert.
 
-### 4. Prompt verfeinern
+### 4. Prompts verfeinern
 
-Öffne die gewünschte `prompt_<panel>.md` und fülle offene TODOs aus. Optional kannst du auf ein bestehendes SQL verweisen:
-
-```markdown
-# Referenz
-Wie sql_offene-issues.sql – aber nur für Issues mit story_points > 0
-```
+Öffne jede `prompt_<panel>.md` und fülle offene TODOs aus. Soll ein SQL eng an einem bestehenden orientiert sein, trage das unter `## Referenz` ein (siehe [SQL aus Referenz ableiten](#sql-aus-referenz-ableiten)).
 
 ### 5. SQL generieren
 
@@ -73,27 +68,61 @@ Sage dem Agent:
 
 > „Generiere SQL für `<dashboard-name>/prompt_<panel>.md`"
 
-Der Skill prüft das Schema, fragt fehlende Informationen ab und schreibt `sql_<panel>.sql` in denselben Ordner.
+Der Skill liest Prompt, Dashboard-README und DB-Schema, fragt fehlende Informationen **alle auf einmal** ab und schreibt `sql_<panel>.sql` in denselben Ordner.
 
 ---
 
-## Arbeiten mit bestehenden Dashboards
+## Workflow 2: Panel zu bestehendem Dashboard hinzufügen
 
-### README in bestehendem Ordner anlegen
+### Schritt 1 – Panel im README beschreiben
 
-> „Lege mir ein README im Verzeichnis `<ordner>` an"
+`README.md` des Dashboards öffnen und einen neuen Panel-Abschnitt ergänzen (Format wie im Beispiel unter Workflow 1, Schritt 2). Das README ist die einzige Pflegestelle für die Panel-Übersicht des Dashboards.
 
-### Einzelne Prompt-Datei anlegen
+### Schritt 2 – Prompt-Grundgerüst generieren
 
-> „Lege eine neue Prompt-Datei für Panel X im Verzeichnis `<ordner>` an"
+Sage dem Agent:
+
+> „Bootstrappe Prompts für `<dashboard-name>`"
+
+Der Skill legt **nur für Panels ohne vorhandene `prompt_*.md`** eine neue Datei an – bestehende werden nicht angefasst. Vor dem Anlegen zeigt er eine Vorschau und wartet auf Bestätigung.
+
+### Schritt 3 – Prompt verfeinern (optional)
+
+Die neue `prompt_<panel>.md` öffnen und etwaige `<!-- TODO: ausfüllen -->`-Marker ergänzen, z. B. genaue Spaltennamen, Filterwerte oder eine Referenz auf ein bestehendes SQL (siehe [SQL aus Referenz ableiten](#sql-aus-referenz-ableiten)).
+
+### Schritt 4 – SQL generieren
+
+Sage dem Agent:
+
+> „Generiere SQL für `<dashboard-name>/prompt_<panel>.md`"
+
+**Kurzform:**
+
+```
+README ergänzen  →  „Bootstrappe Prompts"  →  prompt_*.md prüfen  →  „Generiere SQL"  →  sql_*.sql
+```
+
+> **Abkürzung:** Wer Schritt 1 + 2 überspringen möchte, kann direkt sagen:
+> „Lege eine neue Prompt-Datei für Panel X im Verzeichnis `<ordner>` an" –
+> der Skill erstellt die Datei dann aus einem Template ohne vorheriges Bootstrapping.
+
+---
+
+## Einzeloperationen
 
 ### SQL aus Referenz ableiten
 
-In der `prompt_*.md` unter `# Referenz`:
+Soll ein neues SQL eng an einem bestehenden orientiert sein, genügt folgender Eintrag in der `prompt_*.md` unter `## Referenz`:
 
 > „Wie `sql_xyz.sql` – aber mit folgenden Änderungen: ..."
 
-Der Skill übernimmt das bestehende SQL und wendet die Änderungen an.
+Der Skill liest die referenzierte Datei, wendet die beschriebenen Änderungen an und dokumentiert sie im Header-Kommentarblock des neuen SQL.
+
+### README in bestehendem Ordner anlegen
+
+Falls ein Dashboard-Ordner bereits existiert, aber noch kein README hat:
+
+> „Lege mir ein README im Verzeichnis `<ordner>` an"
 
 ---
 
