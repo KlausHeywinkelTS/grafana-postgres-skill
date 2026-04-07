@@ -1,0 +1,25 @@
+---
+description: Join jira changelog to issues via issue_key
+alwaysApply: true
+---
+
+# Jira Changelog Join Key
+
+When joining `jira_issue_changelog` with `jira_issues` in this project, join via `issue_key`.
+
+- Prefer `jira_issues.issue_key = jira_issue_changelog.issue_key`.
+- Do not use `jira_issues.jira_id = jira_issue_changelog.issue_id` as the default join pattern in SQL, prompts, or generated guidance.
+
+Examples:
+
+```sql
+-- BAD
+FROM jira_issues i
+JOIN jira_issue_changelog c
+  ON c.issue_id = i.jira_id
+
+-- GOOD
+FROM jira_issues i
+JOIN jira_issue_changelog c
+  ON c.issue_key = i.issue_key
+```

@@ -1,0 +1,28 @@
+---
+description: Read and follow the dashboard README for dashboard SQL and prompt work
+globs: "{**/prompt_*.md,**/sql_*.sql,**/README.md}"
+alwaysApply: false
+---
+
+# Dashboard README Context
+
+When working on a dashboard folder, always read the `README.md` in the same folder before creating or changing:
+
+- `prompt_*.md`
+- `sql_*.sql`
+- the dashboard `README.md` itself
+
+Treat that README as authoritative context for:
+
+- dashboard purpose and terminology
+- data sources and Grafana variables
+- field definitions and project-specific meanings
+- timeframe semantics and panel conventions
+
+If a dashboard README defines a custom field, that definition must be followed in all prompts and SQL for that dashboard.
+
+Example:
+
+- In `P2M-dashboard`, `customfield_10112` means `Relevant for Roadmap`
+- Access it as `e.custom_fields->'customfield_10112'->>'value'`
+- Valid values are `Yes`, `No`, `None`

@@ -24,6 +24,31 @@ Es gilt im Unternehmen die Regel: Jedes Epic in Jira steht für ein Release.
 - `$__timeFilter`: Standard-Grafana-Zeitfilter; angewendet auf das **letzte Status-Wechsel-Datum des Epics** (siehe Zeitraum)
 - `${exclude_project_keys}`: Multi-Value-Variable zum Ausschließen von Projekten nach `project_key`. Leer = kein Ausschluss. Werte über `sql_variable-projekt-keys.sql` befüllen.
 
+## Wichtige Felddefinitionen
+
+### `customfield_10112` - Relevant for Roadmap
+
+- Zugriff: `e.custom_fields->'customfield_10112'->>'value'`
+- Moegliche Werte: `Yes`, `No`, `None`
+- Wenn das Dashboard roadmap-relevante Epics meint, ist `Yes` der relevante Filterwert
+- Diese Definition ist fuer das `P2M-dashboard` immer zu beruecksichtigen
+
+### `customfield_10134` - Release Type
+
+- Zugriff: `e.custom_fields->'customfield_10134'->>'value'`
+- Pruefung ueber Teilstrings mit `ILIKE`
+- `ILIKE '%Landmark%'` steht fuer Landmark Releases
+- `ILIKE '%Enhancement%'` steht fuer Enhancement Releases
+- `ILIKE '%Maintenance%'` steht fuer Maintenance Releases
+- `ILIKE '%Experiment%'` steht fuer Experimental Releases
+
+### Epic-Cycle-Time: Startstatus
+
+- Fuer die Cycle Time von Epics ist der fachliche Startstatus `Now`
+- `In Progress` ist fuer Epic-Cycle-Time in diesem Dashboard nicht der richtige Statuswert
+- Wenn eine SQL die Epic-Cycle-Time berechnet, muss der Startpunkt aus dem ersten Statuswechsel nach `Now` ermittelt werden
+- Diese Definition ist fuer das `P2M-dashboard` bei allen Epic-Cycle-Time-Abfragen zu beruecksichtigen
+
 ## Zeitraum
 
 Der Zeitfilter bezieht sich auf das letzte Datum, wann ein Epic in den Status **„After Release"** gewechselt hat.

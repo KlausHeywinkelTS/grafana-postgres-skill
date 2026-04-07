@@ -1,0 +1,23 @@
+---
+description: Use to_value for Jira changelog status filters
+alwaysApply: true
+---
+
+# Jira Changelog Status Field
+
+When querying `jira_issue_changelog` for status transitions in this project, use `to_value` and `from_value` for status comparisons.
+
+- Do not use `to_display_value` or `from_display_value` in SQL, prompts, or generated query guidance.
+- Treat `to_value` as the project-standard field for status checks such as `Done`, `Rejected`, `Closed`, or `After Release`.
+
+Examples:
+
+```sql
+-- BAD
+WHERE field_name = 'status'
+  AND to_display_value IN ('Done', 'Rejected')
+
+-- GOOD
+WHERE field_name = 'status'
+  AND to_value IN ('Done', 'Rejected')
+```
