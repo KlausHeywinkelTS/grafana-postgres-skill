@@ -21,6 +21,7 @@ COUNT pro Label-Kategorie
 # Filter / Bedingungen
 - project_key = 'WISH' (hartkodiert)
 - COALESCE(ji.labels, '') <> '' (leere Labels ausschließen)
+- lbl NOT IN ('Enhancement', 'New', 'Removal') (technische/generische Labels ausschließen)
 
 # Grafana-Variablen
 - $__timeFilter(ji.created_at)

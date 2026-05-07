@@ -5,7 +5,7 @@
 -- Tabellen:    jira_issues
 -- Variablen:   $__timeFilter
 -- Basis-SQL:   –
--- Erstellt:    2026-03-10
+-- Erstellt:    2026-04-23
 -- ============================================================
 
 SELECT
@@ -22,6 +22,14 @@ WHERE
   $__timeFilter(ji.created_at)
   AND ji.project_key = 'WISH'
   AND COALESCE(ji.labels, '') <> ''
+  AND lbl NOT IN ('Enhancement', 'New', 'Removal')
+  AND (
+    ji.description ~* '${source:pipe}'
+    OR (
+      '${source:pipe}' ~* 'Customer Voice Uncensored'
+      AND ji.description ILIKE '%teams message%'
+    )
+  )
 GROUP BY
   lbl
 ORDER BY
