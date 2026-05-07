@@ -68,6 +68,36 @@ Visualisiert Metriken aus dem sogenannten Jira wishlist-Projekt. In die Wishlist
 - **Aggregation**: % per Cluster
 - **Hinweis**: berücksichtigt `$__timeFilter`
 
+## Custom Fields (WISH-spezifisch)
+
+| ID | Jira-Feldname(n) | Zugriff | Beschreibung |
+|----|-----------------|---------|--------------|
+| `customfield_10698` | **Taxonomie** · **Value Driver** · **Strategic Pillar** | `custom_fields->'customfield_10698'->>'value'` | Strategische Einordnung eines Issues. Das Feld wird im Dashboard unter verschiedenen Namen verwendet: in der Jira-Oberfläche heißt es je nach Kontext „Taxonomie" oder „Value Driver"; in Prompts und SQLs dieses Dashboards gelten beide Namen als Synonym für dasselbe Feld. Werte folgen dem Schema `<Cluster> - <Sub-Pillar>`, z.B. `Reach & Acquisition - Subtext`. |
+
+### Cluster-Mapping für customfield_10698
+
+| Basis-Wert (vor dem ersten „–") | Cluster-Label im Dashboard |
+|--------------------------------|---------------------------|
+| `Reach & Acquisition` | Revenue & Growth |
+| `Engagement & Conversion` | Revenue & Growth |
+| `Loyalty & Retention` | Revenue & Growth |
+| `Trust & Risk` | Trust & Risk |
+| `Operational Excellence` | Operational Excellence |
+| `Platform & Ecosystem` | Platform & Ecosystem |
+
+**SQL-Zugriff:**
+```sql
+-- Wert lesen:
+custom_fields->'customfield_10698'->>'value'
+
+-- Befüllt-Prüfung (kein NULL, kein JSON-null):
+(custom_fields->'customfield_10698') IS NOT NULL
+AND (custom_fields->'customfield_10698') <> 'null'::jsonb
+
+-- Basis-Wert extrahieren (Teil vor dem ersten „-"):
+btrim(split_part(custom_fields->'customfield_10698'->>'value', '-', 1))
+```
+
 ## Offene Fragen / TODOs
 <!-- Ungeklärte Punkte zum Dashboard, die noch besprochen werden müssen -->
 <!-- TODO: ausfüllen oder entfernen -->

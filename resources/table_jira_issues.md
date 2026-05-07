@@ -111,6 +111,7 @@ custom_fields->'customfield_10134'->>'value'
 |----|---------------|---------|----------------|
 | `customfield_10134` | Release Type | `custom_fields->'customfield_10134'->>'value'` | z.B. `'Landmark Update (major changes for customers)'` – **Achtung: Exakt-Match schlägt fehl (versteckte Zeichen im Wert), immer ILIKE verwenden** |
 | `customfield_10112` | Relevant for Roadmap | `custom_fields->'customfield_10112'->>'value'` | `'Yes'` oder `'No'` (Großschreibung! Objekt mit value-Property, wie customfield_10134) |
+| `customfield_10698` | **Taxonomie / Value Driver / Strategic Pillar** | `custom_fields->'customfield_10698'->>'value'` | Strategische Einordnung eines Issues. Im WISH-Projekt auch „Value Driver" genannt. Werte folgen dem Schema `<Cluster> - <Sub-Pillar>`, z.B. `Reach & Acquisition - Subtext`. Basis-Wert per `btrim(split_part(..., '-', 1))` extrahieren. |
 
 ```sql
 -- Relevant for Roadmap = yes (Achtung: Großschreibung "Yes"):
