@@ -25,7 +25,6 @@ Keine – eine Zeile pro Epic
 
 # Filter / Bedingungen
 - `issue_type = 'Epic'`
-- `customfield_10112->>'value' = 'Yes'` (Relevant for Roadmap)
 - Kein Landmark-Filter – alle Release-Typen werden angezeigt (release_type als Spalte)
 - Zeitfilter auf relevant_status_at
 

@@ -26,7 +26,6 @@ COUNT pro Monat, mit zwei bedingten Zählern (FILTER WHERE):
 
 # Filter / Bedingungen
 - `issue_type = 'Epic'`
-- `customfield_10112->>'value' = 'Yes'` (Relevant for Roadmap)
 - **Kein** Landmark-Filter (customfield_10134) – alle roadmap-relevanten Epics
 - Zeitfilter auf relevant_status_at
 

@@ -41,7 +41,6 @@ landmark_epics AS (
   FROM jira_issues e
   JOIN epic_release_dates erd ON erd.issue_key = e.issue_key
   WHERE e.issue_type = 'Epic'
-    AND e.custom_fields->'customfield_10112'->>'value' = 'Yes'
     AND e.custom_fields->'customfield_10134'->>'value' ILIKE '%Landmark Update%'
     AND (
       '${exclude_project_keys:csv}' = ''

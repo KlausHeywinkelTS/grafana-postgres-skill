@@ -25,7 +25,6 @@ COUNT mit Bedingung:
 
 # Filter / Bedingungen
 - `issue_type = 'Epic'`
-- `custom_fields->'customfield_10112'->>'value' = 'Yes'` (Relevant for Roadmap, Großschreibung)
 - `custom_fields->'customfield_10134'->>'value' = 'Landmark Update (major changes for customers)'` (Release Type)
 - Epics ohne jeglichen Statuswechsel in 'After Release', 'Done' oder 'Closed' werden nicht berücksichtigt
 

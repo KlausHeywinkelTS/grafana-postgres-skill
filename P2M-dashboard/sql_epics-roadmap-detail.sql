@@ -56,7 +56,6 @@ FROM relevant_status_date rsd
 JOIN jira_issues e  ON e.id = rsd.issue_id
 LEFT JOIN p2m_parents p ON p.parent_key = e.issue_key
 WHERE e.issue_type = 'Epic'
-  AND e.custom_fields->'customfield_10112'->>'value' = 'Yes'
   AND (
     '${exclude_project_keys:csv}' = ''
     OR e.project_key NOT IN ($exclude_project_keys)

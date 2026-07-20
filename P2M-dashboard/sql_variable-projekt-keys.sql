@@ -25,6 +25,6 @@ SELECT DISTINCT
 FROM jira_issues e
 JOIN epic_release_dates erd ON erd.issue_key = e.issue_key
 WHERE e.issue_type = 'Epic'
-  AND e.custom_fields->'customfield_10112'->>'value' = 'Yes'
+  AND e.project_key in ('INV', 'QUE', 'REVIN', 'LSRT', 'RM', 'CC', 'TBI', 'TPSCON', 'PL', 'GUARANTEE', 'CA', 'SEO', 'TCM', 'SW')
   AND $__timeFilter(erd.release_date)
 ORDER BY e.project_key

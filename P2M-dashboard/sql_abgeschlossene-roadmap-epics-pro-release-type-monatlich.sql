@@ -57,7 +57,6 @@ roadmap_epics AS (
   JOIN relevant_end_dates red
     ON red.issue_key = e.issue_key
   WHERE e.issue_type = 'Epic'
-    AND e.custom_fields->'customfield_10112'->>'value' = 'Yes'
     AND red.relevant_status_at IS NOT NULL
 )
 

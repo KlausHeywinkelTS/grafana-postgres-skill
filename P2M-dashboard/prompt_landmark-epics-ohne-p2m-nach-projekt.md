@@ -21,7 +21,6 @@ COUNT pro project_key, nur Epics OHNE P2M-Task-Child
 # Filter / Bedingungen
 Identisch zu sql_landmark-release-mit-p2m-tasks.sql:
 - `issue_type = 'Epic'`
-- `customfield_10112->>'value' = 'Yes'`
 - `customfield_10134->>'value' ILIKE '%Landmark Update%'`
 - Zeitfilter auf release_date
 - Zusätzlich: NUR Epics, bei denen KEIN Child-Issue mit `issue_type = 'P2M Task'` existiert (NOT EXISTS)

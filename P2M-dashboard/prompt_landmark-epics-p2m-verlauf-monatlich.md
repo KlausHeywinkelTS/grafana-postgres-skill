@@ -40,7 +40,6 @@ Fehlende Monate aus der Monatsserie sollen per `LEFT JOIN` ergänzt und mit `COA
 ## Filter / Bedingungen
 
 - `issue_type = 'Epic'`
-- `customfield_10112->>'value' = 'Yes'` (Relevant for Roadmap)
 - `customfield_10134->>'value' ILIKE '%Landmark Update%'` (nur Landmark-Releases)
 - optionaler Ausschluss von Projekten über `${exclude_project_keys}`
 - Zeitfilter auf `relevant_status_at`, begrenzt durch `$__timeFrom()` und `$__timeTo()`

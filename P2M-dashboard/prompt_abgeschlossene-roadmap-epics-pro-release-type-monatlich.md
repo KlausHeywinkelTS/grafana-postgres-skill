@@ -39,7 +39,6 @@ Jedes Epic soll nur einmal gezaehlt werden, basierend auf seinem priorisierten r
 ## Filter / Bedingungen
 
 - `jira_issues.issue_type = 'Epic'`
-- Nur roadmap-relevante Epics beruecksichtigen: `e.custom_fields->'customfield_10112'->>'value' = 'Yes'`
 - Nur Epics beruecksichtigen, fuer die ein relevanter Statuswechsel nach `After Release`, `Done` oder `Closed` existiert
 - Release Type ueber `e.custom_fields->'customfield_10134'->>'value'` lesen
 - Release Type per `ILIKE` in diese vier Gruppen aufteilen:
@@ -65,7 +64,6 @@ Jedes Epic soll nur einmal gezaehlt werden, basierend auf seinem priorisierten r
 - Fuer Statusanalysen in diesem Projekt `to_value` und `from_value` verwenden, nicht `to_display_value` oder `from_display_value`
 - Fuer die Statuslogik nur Eintraege mit `field_name = 'status'` verwenden
 - Fuer `customfield_10134` immer `ILIKE` statt Exaktvergleich verwenden
-- Fuer `customfield_10112` den echten Wert `Yes` mit korrekter Gross-/Kleinschreibung verwenden
 - Falls ein Epic mehrfach nach `After Release`, `Done` oder `Closed` gewechselt ist, die bestehende Priorisierung beibehalten: letzter `After Release`, sonst letzter `Done` oder `Closed`
 - Fuer ein Bar-Chart ist kein `AS time` noetig; die Monatsachse soll als Kategorie dargestellt werden
 - Sortierung: Monat aufsteigend

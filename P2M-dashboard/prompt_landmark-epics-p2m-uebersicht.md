@@ -22,7 +22,6 @@ Keine – eine Zeile pro Epic
 # Filter / Bedingungen
 Identisch zu sql_landmark-release-mit-p2m-tasks.sql:
 - `issue_type = 'Epic'`
-- `customfield_10112->>'value' = 'Yes'`
 - `customfield_10134->>'value' ILIKE '%Landmark Update%'`
 - Zeitfilter auf release_date
 

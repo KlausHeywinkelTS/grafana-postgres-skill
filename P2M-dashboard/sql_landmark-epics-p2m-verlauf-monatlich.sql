@@ -64,7 +64,6 @@ landmark_epics AS (
   JOIN jira_issues e ON e.issue_key = rsd.issue_key
   LEFT JOIN p2m_parents p ON p.parent_key = e.issue_key
   WHERE e.issue_type = 'Epic'
-    AND e.custom_fields->'customfield_10112'->>'value' = 'Yes'
     AND e.custom_fields->'customfield_10134'->>'value' ILIKE '%Landmark Update%'
     AND (
       '${exclude_project_keys:csv}' = ''
